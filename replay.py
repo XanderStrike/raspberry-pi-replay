@@ -9,6 +9,7 @@ button = Button(25)
 camera = picamera.PiCamera(resolution=(1024,576), framerate=60)
 
 def reset_camera():
+  subprocess.call("rm tmp.mp4 video.h264", shell=True)
   camera.start_preview(alpha=128)
   sleep(1)
   camera.start_recording('video.h264')
@@ -25,7 +26,12 @@ while(True):
     command = "MP4Box -fps 25 -add video.h264 tmp.mp4"
     subprocess.call(command, shell=True)
 
-    duration = int(subprocess.call("avprobe -show_format tmp.mp4 2>&1 | sed -n '/duration/s/.*=//p'", shell=True))
+#    subprocess.call("avprobe -show_format tmp.mp4 2>&1 | sed -n '/duration/s/.*=//p'", shell=True)
+    duration = subprocess.check_output("avprobe -show_format tmp.mp4 2>&1 | sed -n '/duration/s/.*=//p'", shell=True)
+    duration = int(float(duration))
+    print 'DURATION'
+    print duration
+    print 'DURATION'
  
     start = duration - 10
 
