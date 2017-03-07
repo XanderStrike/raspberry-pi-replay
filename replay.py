@@ -6,7 +6,7 @@ import subprocess
 
 led = Squid(18, 23, 24)
 button = Button(25)
-camera = picamera.PiCamera(resolution=(1024,576), framerate=60)
+camera = picamera.PiCamera(resolution='720p', framerate=60)
 
 def reset_camera():
   subprocess.call("rm tmp.mp4 video.h264", shell=True)
@@ -16,22 +16,19 @@ def reset_camera():
 
 reset_camera()
 
+i = 0
+
 while(True):
   if button.is_pressed():
-    led.set_color(RED)
-    sleep(3)
+    led.set_color(BLUE)
     camera.stop_recording()
     camera.stop_preview()
 
     command = "MP4Box -fps 25 -add video.h264 tmp.mp4"
     subprocess.call(command, shell=True)
 
-#    subprocess.call("avprobe -show_format tmp.mp4 2>&1 | sed -n '/duration/s/.*=//p'", shell=True)
     duration = subprocess.check_output("avprobe -show_format tmp.mp4 2>&1 | sed -n '/duration/s/.*=//p'", shell=True)
     duration = int(float(duration))
-    print 'DURATION'
-    print duration
-    print 'DURATION'
  
     start = duration - 10
 
@@ -44,6 +41,11 @@ while(True):
     
     reset_camera()
   else:
-    led.set_color(BLUE)
+    i = (i + 10) % 100
+    if (i > 50):
+      led.set_color(RED, 100)
+    else:
+      led.set_color(RED, 0)
+    
     sleep(0.1)
 
