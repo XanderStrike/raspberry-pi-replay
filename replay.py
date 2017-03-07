@@ -7,13 +7,13 @@ import subprocess
 led = Squid(18, 23, 24)
 button = Button(25)
 camera = picamera.PiCamera(resolution='720p', framerate=60)
+subprocess.call("rm *.h264", shell=True)
 
 filename = 0
 def reset_camera():
   global filename
   filename += 1
-  subprocess.call("rm tmp.mp4 video.h264", shell=True)
-  camera.start_preview(alpha=128)
+  camera.start_preview(alpha=0)
   sleep(1)
   camera.start_recording(str(filename) + '.h264')
 
