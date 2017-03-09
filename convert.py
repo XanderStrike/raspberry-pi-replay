@@ -1,3 +1,7 @@
+# convert.py
+# alex standke
+# hack day march 2017
+
 import sys
 import subprocess
 import time
@@ -17,8 +21,11 @@ duration = int(float(duration))
 start = duration - LENGTH
 
 stop_time = int(time.time())
-command = "MP4Box -add tmp.mp4 -splitx " + str(start) + ":" + str(duration) + " " + str(stop_time) + ".mp4"
-subprocess.call(command, shell=True)
+if start > 0:
+  command = "MP4Box -add tmp.mp4 -splitx " + str(start) + ":" + str(duration) + " " + str(stop_time) + ".mp4"
+  subprocess.call(command, shell=True)
+else:
+  subprocess.call("cp tmp.mp4 " + str(stop_time) + ".mp4", shell=True)
 
 subprocess.call("omxplayer " + str(stop_time) + ".mp4", shell=True)
 
