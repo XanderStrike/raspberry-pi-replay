@@ -11,10 +11,19 @@ import subprocess
 import signal
 import sys
 
+import socket
+
 RESOLUTION = '720p'
 FPS = 60
 
 CLIP_TIME = 60 # in seconds
+
+BIND = '0.0.0.0'
+PORT = 4005
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind((BIND, PORT))
+sock.setblocking(0)
 
 led = Squid(18, 23, 24)
 button = Button(25)
@@ -26,12 +35,18 @@ subprocess.call("rm *.h264", shell=True)
 start_time = int(time.time())
 
 def signal_handler(signal, frame):
-  print 'Exiting...'
+  clean_shutdown()
+signal.signal(signal.SIGINT, signal_handler)
+
+def clean_shutdown():
+  global camera
+  global sock
+  print "Exiting..."
   subprocess.call("rm *.h264", shell=True)
   camera.stop_recording()
   camera.close()
+  sock.close()
   sys.exit()
-signal.signal(signal.SIGINT, signal_handler)
 
 filename = 0
 def reset_camera():
@@ -44,24 +59,26 @@ def reset_camera():
 
 reset_camera()
 
-i = 0
+def take_replay():
+  global led
+  global camera
+  global filename
 
+  led.set_color(BLUE)
+  camera.stop_recording()
+  subprocess.call("python convert.py " + str(filename) + " &", shell=True)
+  reset_camera()
+
+def game_end():
+  print "ending game"
+  # do something idk
+
+i = 0
 while(True):
   if button.is_pressed():
-    led.set_color(BLUE)
-    camera.stop_recording()
-
-    subprocess.call("python convert.py " + str(filename) + " &", shell=True)
-
-    reset_camera()
+    take_replay()
   elif exit_button.is_pressed():
-    print 'Exiting...'
-    subprocess.call("rm *.h264", shell=True)
-    camera.stop_recording()
-    camera.close()
-    sleep(0.5)
-    #subprocess.call("sudo reboot", shell=True)
-    sys.exit()
+    clean_shutdown()
   else:
     if (int(time.time()) - start_time) > CLIP_TIME:
       print "Clip too long, restarting"
@@ -73,6 +90,15 @@ while(True):
       led.set_color(RED, 100)
     else:
       led.set_color(RED, 0)
+
+    try:
+      data = sock.recv(1024)
+      if data == 'game_end':
+        game_end()
+      else:
+        take_replay()
+    except socket.error:
+      x = 'idk'
 
     sleep(0.1)
 
