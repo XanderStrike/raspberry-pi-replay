@@ -70,8 +70,7 @@ def take_replay():
   reset_camera()
 
 def game_end():
-  print "ending game"
-  # do something idk
+  subprocess.call("python endgame.py", shell=True)
 
 i = 0
 while(True):
