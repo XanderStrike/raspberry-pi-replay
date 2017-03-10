@@ -24,3 +24,5 @@ response = requests.post(
     webhook_url, data=json.dumps(slack_data),
     headers={'Content-Type': 'application/json'}
 )
+
+subprocess.call("rm *.mp4", shell=True)
