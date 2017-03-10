@@ -82,6 +82,7 @@ while(True):
     if (int(time.time()) - start_time) > CLIP_TIME:
       print "Clip too long, restarting"
       camera.stop_recording()
+      subprocess.call("rm " + str(filename) + ".h264", shell=True)
       reset_camera()
 
     i = (i + 10) % 100
@@ -93,6 +94,7 @@ while(True):
     try:
       data = sock.recv(1024)
       if data == 'game_end':
+        led.set_color(GREEN, 100)
         game_end()
       else:
         take_replay()
