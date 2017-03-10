@@ -66,7 +66,7 @@ def take_replay():
 
   led.set_color(BLUE)
   camera.stop_recording()
-  subprocess.call("python convert.py " + str(filename) + " &", shell=True)
+  subprocess.call("python convert.py " + str(filename) + "", shell=True)
   reset_camera()
 
 def game_end():

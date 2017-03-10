@@ -10,3 +10,4 @@ for file in glob.glob("*.mp4"):
 
 subprocess.call(command + " out.mp4", shell=True)
 
+subprocess.call("/usr/local/bin/youtube-upload  --playlist \"Foosball Replays\" --client-secrets=/home/pi/replay/client_id.json --title=\"Foosball Replay\" out.mp4", shell=True)
