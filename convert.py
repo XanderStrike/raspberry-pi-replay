@@ -6,7 +6,7 @@ import sys
 import subprocess
 import time
 
-LENGTH = 5
+LENGTH = 8
 FPS = 25
 
 print "=== CONVERSION STARTING ==="

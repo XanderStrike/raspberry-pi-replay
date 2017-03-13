@@ -65,9 +65,12 @@ def take_replay():
   global filename
 
   led.set_color(BLUE)
+  sleep(1.5)
   camera.stop_recording()
   subprocess.call("python convert.py " + str(filename) + "", shell=True)
   reset_camera()
+  sock.recv(1024)
+
 
 def game_end():
   subprocess.call("python endgame.py", shell=True)
